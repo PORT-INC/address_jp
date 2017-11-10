@@ -1,4 +1,4 @@
-prefecture_id,city_code,_unused1,prefecture_name,wide_area_name,_unused_2,city_name,_unused3
+prefecture_id,city_code,city_id,prefecture_name,wide_area_name,_unused_2,city_name,_unused3
 1,0,1000,北海道,,,,ほっかいどう
 1,100,1100,北海道,札幌市,,,さっぽろし
 1,101,1101,北海道,札幌市,,中央区,ちゅうおうく

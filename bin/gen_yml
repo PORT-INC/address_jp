@@ -6,32 +6,37 @@ require 'csv'
 
 # data to write
 cities_data = []
+wards_data = []
+counties_data = []
+towns_data = []
 
 # download CSV from http://www.soumu.go.jp/main_content/000323625.csv as cities_jp.csv,
 # convert charset to UTF-8, and rename headers as below
 
 # ken-code => prefecture_id
 # sityouson-code => city_code
+# tiiki-code => city_id
 # sityouson-name1 => wide_area_name
 # sityouson-name3 => city_name
 
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
-  prefecture_id, city_name = begin
-    case csv[:city_code]
-    when 0 then next # 都道府県
-    when 100..199 # 政令指定都市, 東京特別区
-      next if csv[:city_name].blank? # 区の情報を含まない
-      [csv[:prefecture_id], "#{csv[:wide_area_name]}#{csv[:city_name]}"]
-    when 200..299 # 市
+  case csv[:city_code]
+  when 0 then next # 都道府県
+  when 100..199 # 政令指定都市, 東京特別区
+    if csv[:city_code] % 10 == 0 # 政令指定都市
+      cities_data << { id: csv[:city_id], prefecture_id: csv[:prefecture_id], name: csv[:wide_area_name] }
+    else # 区
+      # TODO: read ward
+    end
+  when 200..299 # 市
+    [csv[:prefecture_id], csv[:city_name]]
+  else # 郡部・町村
+    next if csv[:city_name].blank? # 郡
+    if csv[:prefecture_id] == 1 || (csv[:prefecture_id] == 13 && csv[:city_code] >= 360)
+      # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
       [csv[:prefecture_id], csv[:city_name]]
-    else # 郡部・町村
-      next if csv[:city_name].blank? # 郡
-      if csv[:prefecture_id] == 1 || (csv[:prefecture_id] == 13 && csv[:city_code] >= 360)
-        # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
-        [csv[:prefecture_id], csv[:city_name]]
-      else
-        [csv[:prefecture_id], "#{csv[:wide_area_name]}#{csv[:city_name]}"]
-      end
+    else
+      [csv[:prefecture_id], "#{csv[:wide_area_name]}#{csv[:city_name]}"]
     end
   end
 
