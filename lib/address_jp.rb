@@ -1,4 +1,6 @@
-require "address_jp/version"
+require 'address_jp/version'
+require 'address_jp/prefecture'
+
 require 'yaml'
 
 module AddressJp
