@@ -13,6 +13,10 @@ module AddressJp
           AddressJp::Prefecture.new(**hash)
         end
       end
+
+      def regex
+        /(#{all.map(&:name).join('|')})/
+      end
     end
   end
 end
