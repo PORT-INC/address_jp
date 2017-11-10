@@ -9,7 +9,7 @@ module AddressJp
 
     class << self
       def all
-        AddressJp.load_master_data(:prefectures).map do |hash|
+        AddressJp::Util.load_master_data(:prefectures).map do |hash|
           AddressJp::Prefecture.new(**hash)
         end
       end
