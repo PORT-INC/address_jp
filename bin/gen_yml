@@ -83,7 +83,7 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
       wards_data << ward_hash(csv)
     end
   when 200..299 # 市
-    [csv[:prefecture_id], csv[:city_name]]
+    cities_data << city_hash(csv)
   else # 郡部・町村
     # TODO: read county
     if prefecture == HOKKAIDO || (prefecture == TOKYO && city_code >= 360)
