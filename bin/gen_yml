@@ -3,6 +3,7 @@
 require 'bundler/setup'
 require 'address_jp'
 require 'csv'
+require 'pp'
 
 # data to write
 cities_data = []
@@ -18,6 +19,11 @@ towns_data = []
 # tiiki-code => city_id
 # sityouson-name1 => wide_area_name
 # sityouson-name3 => city_name
+
+HOKKAIDO = 1
+TOKYO = 13
+KANAGAWA = 14
+OSAKA = 27
 
 def central_city_hash(csv)
   {
@@ -35,10 +41,23 @@ def city_hash(csv)
   }
 end
 
-HOKKAIDO = 1
-TOKYO = 13
-KANAGAWA = 14
-OSAKA = 27
+def ward_hash(csv)
+  belong_city_code =
+    if csv[:prefecture_id] == OSAKA
+      [*101..139].include?(csv[:city_code]) ? 100 : 140
+    else
+      case csv[:city_code]
+      when 101..129; 100;
+      when 131..149; 130;
+      else; 150; end
+    end
+  belong_city_id = csv[:prefecture_id] * 1000 + belong_city_code
+  {
+    id: csv[:city_id],
+    city_id: belong_city_id,
+    name: csv[:city_name]
+  }
+end
 
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
   prefecture = csv[:prefecture_id]
@@ -47,8 +66,9 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
   case city_code
   when 0 then next # 都道府県
   when 100..199 # 政令指定都市, 東京特別区
-    if (city_code == 100 && prefecture != TOKYO) || city_code == 130
+    if city_code == 100 || city_code == 130
       # 政令指定都市 (東京都特別区部以外)
+      next if prefecture == TOKYO # 「特別区部」自体
       cities_data << central_city_hash(csv)
     elsif prefecture == KANAGAWA && city_code == 150
       # 神奈川県相模原市
@@ -59,6 +79,8 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
     elsif prefecture == TOKYO && city_code != 100
       # 東京特別区
       cities_data << city_hash(csv)
+    else # 区
+      wards_data << ward_hash(csv)
     end
   when 200..299 # 市
     [csv[:prefecture_id], csv[:city_name]]
@@ -73,4 +95,5 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
   end
 end
 
-p cities_data
+pp cities_data
+pp wards_data
