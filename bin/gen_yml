@@ -27,17 +27,25 @@ def city_hash(csv)
   }
 end
 
+HOKKAIDO = 1
+TOKYO = 13
+KANAGAWA = 14
+OSAKA = 27
+
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
-  case csv[:city_code]
+  prefecture = csv[:prefecture_id]
+  city_code = csv[:city_code]
+
+  case city_code
   when 0 then next # 都道府県
   when 100..199 # 政令指定都市, 東京特別区
-    if (csv[:city_code] == 100 && csv[:prefecture_id] != 13) || csv[:city_code] == 130
+    if (city_code == 100 && prefecture != TOKYO) || city_code == 130
       # 政令指定都市 (東京都特別区部以外)
       cities_data << city_hash(csv)
-    elsif csv[:prefecture_id] == 14 && csv[:city_code] == 150
+    elsif prefecture == KANAGAWA && city_code == 150
       # 神奈川県相模原市
       cities_data << city_hash(csv)
-    elsif csv[:prefecture_id] == 27 && csv[:city_code] == 140
+    elsif prefecture == OSAKA && city_code == 140
       # 大阪府堺市
       cities_data << city_hash(csv)
     else # 区
@@ -47,7 +55,7 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
     [csv[:prefecture_id], csv[:city_name]]
   else # 郡部・町村
     # TODO: read county
-    if csv[:prefecture_id] == 1 || (csv[:prefecture_id] == 13 && csv[:city_code] >= 360)
+    if prefecture == HOKKAIDO || (prefecture == TOKYO && city_code >= 360)
       # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
       # TODO: read town
     else
