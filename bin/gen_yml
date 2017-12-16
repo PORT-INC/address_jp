@@ -97,3 +97,8 @@ end
 
 pp cities_data
 pp wards_data
+
+AddressJp::Util.dump_yaml cities_data, 'cities'
+AddressJp::Util.dump_yaml wards_data, 'wards'
+
+puts 'Complete.'
