@@ -17,6 +17,10 @@ module AddressJp
       def regex
         /(#{all.map(&:name).join('|')})/
       end
+
+      def find(id)
+        all.find { |prefecture| prefecture.id == id }
+      end
     end
   end
 end
