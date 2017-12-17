@@ -25,6 +25,15 @@ module AddressJp
           model_name.to_s.classify.constantize.find(model_id)
         end
       end
+
+      def has_many(model_name)
+        define_method model_name do
+          model_name.to_s.classify.constantize.all.select do |association|
+            association_name = "#{self.class.to_s.underscore.split('/').last}_id"
+            association.send(association_name) == self.id
+          end
+        end
+      end
     end
   end
 end
