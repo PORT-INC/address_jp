@@ -1,3 +1,5 @@
+require 'yaml'
+
 module AddressJp
   module Util
     def self.root

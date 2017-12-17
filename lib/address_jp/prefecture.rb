@@ -1,5 +1,7 @@
 module AddressJp
-  class Prefecture
+  class Prefecture < ApplicationModel
+    data_file 'prefectures'
+
     attr_reader :id, :name
 
     def initialize(id:, name:)
@@ -12,12 +14,6 @@ module AddressJp
     end
 
     class << self
-      def all
-        AddressJp::Util.load_master_data(:prefectures).map do |hash|
-          AddressJp::Prefecture.new(**hash)
-        end
-      end
-
       def regex
         /(#{all.map(&:name).join('|')})/
       end
