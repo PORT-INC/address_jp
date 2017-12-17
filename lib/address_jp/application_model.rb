@@ -18,6 +18,13 @@ module AddressJp
       def find(id)
         all.find { |prefecture| prefecture.id == id }
       end
+
+      def belongs_to(model_name)
+        define_method model_name do
+          model_id = self.send("#{model_name}_id")
+          model_name.to_s.classify.constantize.find(model_id)
+        end
+      end
     end
   end
 end

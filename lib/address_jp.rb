@@ -7,6 +7,7 @@ require 'address_jp/city'
 require 'yaml'
 require 'active_support'
 require 'active_support/core_ext'
+require 'pry'
 
 module AddressJp
 end

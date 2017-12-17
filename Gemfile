@@ -5,3 +5,4 @@ gemspec
 
 gem 'pry'
 gem 'activesupport', '~> 4.2', '>= 4.2.6'
+gem 'pry-byebug'
