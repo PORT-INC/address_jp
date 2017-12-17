@@ -12,15 +12,5 @@ module AddressJp
     def cities
       City.all.select { |city| city.prefecture_id == @id }
     end
-
-    class << self
-      def regex
-        /(#{all.map(&:name).join('|')})/
-      end
-
-      def find(id)
-        all.find { |prefecture| prefecture.id == id }
-      end
-    end
   end
 end
