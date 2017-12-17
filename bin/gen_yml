@@ -1,0 +1,104 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+require 'address_jp'
+require 'csv'
+require 'pp'
+
+# data to write
+cities_data = []
+wards_data = []
+counties_data = []
+towns_data = []
+
+# download CSV from http://www.soumu.go.jp/main_content/000323625.csv as cities_jp.csv,
+# convert charset to UTF-8, and rename headers as below
+
+# ken-code => prefecture_id
+# sityouson-code => city_code
+# tiiki-code => city_id
+# sityouson-name1 => wide_area_name
+# sityouson-name3 => city_name
+
+HOKKAIDO = 1
+TOKYO = 13
+KANAGAWA = 14
+OSAKA = 27
+
+def central_city_hash(csv)
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    name: csv[:wide_area_name]
+  }
+end
+
+def city_hash(csv)
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    name: csv[:city_name]
+  }
+end
+
+def ward_hash(csv)
+  belong_city_code =
+    if csv[:prefecture_id] == OSAKA
+      [*101..139].include?(csv[:city_code]) ? 100 : 140
+    else
+      case csv[:city_code]
+      when 101..129; 100;
+      when 131..149; 130;
+      else; 150; end
+    end
+  belong_city_id = csv[:prefecture_id] * 1000 + belong_city_code
+  {
+    id: csv[:city_id],
+    city_id: belong_city_id,
+    name: csv[:city_name]
+  }
+end
+
+CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
+  prefecture = csv[:prefecture_id]
+  city_code = csv[:city_code]
+
+  case city_code
+  when 0 then next # 都道府県
+  when 100..199 # 政令指定都市, 東京特別区
+    if city_code == 100 || city_code == 130
+      # 政令指定都市 (東京都特別区部以外)
+      next if prefecture == TOKYO # 「特別区部」自体
+      cities_data << central_city_hash(csv)
+    elsif prefecture == KANAGAWA && city_code == 150
+      # 神奈川県相模原市
+      cities_data << central_city_hash(csv)
+    elsif prefecture == OSAKA && city_code == 140
+      # 大阪府堺市
+      cities_data << central_city_hash(csv)
+    elsif prefecture == TOKYO && city_code != 100
+      # 東京特別区
+      cities_data << city_hash(csv)
+    else # 区
+      wards_data << ward_hash(csv)
+    end
+  when 200..299 # 市
+    cities_data << city_hash(csv)
+  else # 郡部・町村
+    # TODO: read county
+    if prefecture == HOKKAIDO || (prefecture == TOKYO && city_code >= 360)
+      # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
+      # TODO: read town
+    else
+      # TODO: read town
+    end
+  end
+end
+
+pp cities_data
+pp wards_data
+
+AddressJp::Util.dump_yaml cities_data, 'cities'
+AddressJp::Util.dump_yaml wards_data, 'wards'
+
+puts 'Complete.'

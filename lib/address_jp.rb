@@ -1,14 +1,13 @@
 require 'address_jp/version'
+require 'address_jp/util'
+require 'address_jp/application_model'
 require 'address_jp/prefecture'
+require 'address_jp/city'
 
 require 'yaml'
+require 'active_support'
+require 'active_support/core_ext'
+require 'pry'
 
 module AddressJp
-  def self.root
-    File.expand_path('../..', __FILE__)
-  end
-
-  def self.load_master_data(file_name)
-    YAML.load_file("#{AddressJp.root}/lib/address_jp/data/#{file_name}.yml")
-  end
 end

@@ -5,7 +5,11 @@ describe AddressJp do
     expect(AddressJp::VERSION).not_to be nil
   end
 
-  it "does something useful" do
-    expect(false).to eq(true)
+  describe AddressJp::Prefecture do
+    # TODO: better example
+    it 'method works' do
+      expect(AddressJp::Prefecture.all).to be_truthy
+      expect(AddressJp::Prefecture.regex).to be_truthy
+    end
   end
 end
