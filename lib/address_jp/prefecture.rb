@@ -7,6 +7,10 @@ module AddressJp
       @name = name
     end
 
+    def cities
+      City.all.select { |city| city.prefecture_id == @id }
+    end
+
     class << self
       def all
         AddressJp::Util.load_master_data(:prefectures).map do |hash|

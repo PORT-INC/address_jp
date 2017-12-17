@@ -1,6 +1,6 @@
 module AddressJp
   class City
-    attr_reader :id, :name
+    attr_reader :id, :name, :prefecture_id
 
     def initialize(id:, name:, prefecture_id:)
       @id = id.to_i

@@ -8,4 +8,10 @@ describe Prefecture do
       expect(subject.name).to eq '北海道'
     end
   end
+
+  describe '#cities' do
+    subject { prefecture.cities }
+    let(:prefecture) { Prefecture.all[12] }
+    it { is_expected.to be_truthy }
+  end
 end
