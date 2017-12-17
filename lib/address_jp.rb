@@ -5,6 +5,8 @@ require 'address_jp/prefecture'
 require 'address_jp/city'
 
 require 'yaml'
+require 'active_support'
+require 'active_support/core_ext'
 
 module AddressJp
 end

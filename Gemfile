@@ -4,3 +4,4 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'pry'
+gem 'activesupport', '~> 4.2', '>= 4.2.6'
