@@ -81,6 +81,15 @@ def town_hash(csv)
   }
 end
 
+def town_without_county_hash(csv)
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    county_id: nil,
+    name: csv[:city_name]
+  }
+end
+
 def okinawa_town_hash(csv)
   city_code = csv[:city_code]
   county_id = nil
@@ -129,10 +138,14 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
   when 200..299 # 市
     cities_data << city_hash(csv)
   else # 郡部・町村
-    # TODO: read county
-    if prefecture == HOKKAIDO || (prefecture == TOKYO && city_code >= 360)
-      # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
-      next
+    if prefecture == HOKKAIDO
+      # 北海道は郡ではない情報があるため飛ばす
+      next if city_code % 30 == 0
+      towns_data << town_without_county_hash(csv)
+    elsif prefecture == TOKYO && city_code >= 360
+      # 東京都の離島は郡の情報がない
+      next if city_code % 20 == 0
+      towns_data << town_without_county_hash(csv)
     elsif prefecture == OKINAWA
       # 沖縄県島尻郡は例外的に20毎の割り当てでない
       if OKINAWA_COUNTIES.include?(city_code)
