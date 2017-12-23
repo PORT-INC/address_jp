@@ -24,6 +24,7 @@ HOKKAIDO = 1
 TOKYO = 13
 KANAGAWA = 14
 OSAKA = 27
+OKINAWA = 47
 
 def central_city_hash(csv)
   {
@@ -59,6 +60,14 @@ def ward_hash(csv)
   }
 end
 
+def county_hash(csv)
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    name: csv[:wide_area_name],
+  }
+end
+
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
   prefecture = csv[:prefecture_id]
   city_code = csv[:city_code]
@@ -88,15 +97,23 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
     # TODO: read county
     if prefecture == HOKKAIDO || (prefecture == TOKYO && city_code >= 360)
       # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
+      next
+    elsif prefecture == OKINAWA
+      # 沖縄県島尻郡は例外的に20毎の割り当てでない
       # TODO: read town
+    elsif city_code % 20 == 0
+      # 群
+      counties_data << county_hash(csv)
     else
-      # TODO: read town
+      # 町・村
+      # TODO: read as town
     end
   end
 end
 
 pp cities_data
 pp wards_data
+pp counties_data
 
 AddressJp::Util.dump_yaml cities_data, 'cities'
 AddressJp::Util.dump_yaml wards_data, 'wards'
