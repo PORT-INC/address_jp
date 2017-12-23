@@ -100,7 +100,13 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
       next
     elsif prefecture == OKINAWA
       # 沖縄県島尻郡は例外的に20毎の割り当てでない
-      # TODO: read town
+      OKINAWA_COUNTIES = [300, 320, 340, 370, 380]
+      if OKINAWA_COUNTIES.include?(city_code)
+        counties_data << county_hash(csv)
+      else
+        # 沖縄県の町・村
+        # TODO: read as town
+      end
     elsif city_code % 20 == 0
       # 群
       counties_data << county_hash(csv)
