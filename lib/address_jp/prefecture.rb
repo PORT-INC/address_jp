@@ -6,5 +6,6 @@ module AddressJp
     has_many :cities
     has_many :counties
     has_many :towns
+    has_many :villages # alias of towns
   end
 end

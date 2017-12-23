@@ -25,4 +25,9 @@ describe Prefecture do
     subject { prefecture.towns }
     it { is_expected.to be_truthy }
   end
+
+  describe '#villages' do
+    subject { prefecture.villages }
+    it { is_expected.to be_truthy }
+  end
 end
