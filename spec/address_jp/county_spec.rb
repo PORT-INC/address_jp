@@ -20,4 +20,9 @@ describe County do
     subject { county.towns }
     it { is_expected.to be_truthy }
   end
+
+  describe '#villages' do
+    subject { county.villages }
+    it { is_expected.to be_truthy }
+  end
 end
