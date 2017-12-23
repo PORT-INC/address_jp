@@ -81,6 +81,28 @@ def town_hash(csv)
   }
 end
 
+def okinawa_town_hash(csv)
+  city_code = csv[:city_code]
+  county_id = nil
+  if city_code > OKINAWA_COUNTIES.last
+    county_id = 47000 + OKINAWA_COUNTIES.last
+  else
+    OKINAWA_COUNTIES.each_with_index do |county_code, i|
+      if county_code < city_code && city_code < OKINAWA_COUNTIES[i + 1]
+        county_id = 47000 + county_code
+        break
+      end
+    end
+  end
+
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    county_id: county_id,
+    name: csv[:city_name]
+  }
+end
+
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
   prefecture = csv[:prefecture_id]
   city_code = csv[:city_code]
@@ -117,7 +139,7 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
         counties_data << county_hash(csv)
       else
         # 沖縄県の町・村
-        # TODO: read as town
+        towns_data << okinawa_town_hash(csv)
       end
     elsif city_code % 20 == 0
       # 群
@@ -129,6 +151,7 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
   end
 end
 
+pp counties_data
 pp towns_data
 
 AddressJp::Util.dump_yaml cities_data, 'cities'
