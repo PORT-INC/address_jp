@@ -15,4 +15,9 @@ describe County do
       expect(subject.name).to eq '青森県'
     end
   end
+
+  describe '#towns' do
+    subject { county.towns }
+    it { is_expected.to be_truthy }
+  end
 end

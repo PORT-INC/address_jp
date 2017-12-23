@@ -4,5 +4,6 @@ module AddressJp
 
     attr_accessor :id, :prefecture_id, :name
     belongs_to :prefecture
+    has_many :towns
   end
 end
