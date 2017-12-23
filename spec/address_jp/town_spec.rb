@@ -33,3 +33,10 @@ describe Town do
     end
   end
 end
+
+describe 'Village' do
+  subject { Village.new(id: 13421, prefecture_id: 13, county_id: nil, name: '小笠原村') }
+  it 'class name also available' do
+    is_expected.to be_truthy
+  end
+end

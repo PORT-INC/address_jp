@@ -6,4 +6,7 @@ module AddressJp
     belongs_to :prefecture
     belongs_to :county
   end
+
+  # class name 'Village' is also available
+  Village = Town
 end
