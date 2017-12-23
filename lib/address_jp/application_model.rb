@@ -1,5 +1,11 @@
 module AddressJp
   class ApplicationModel
+    def initialize(**attributes)
+      attributes.each do |key, value|
+        instance_variable_set "@#{key}", value
+      end
+    end
+
     class << self
       def data_file(file_name)
         @data = AddressJp::Util.load_master_data(file_name)
@@ -16,7 +22,7 @@ module AddressJp
       end
 
       def find(id)
-        all.find { |prefecture| prefecture.id == id }
+        all.find { |model| model.id == id }
       end
 
       def belongs_to(model_name)

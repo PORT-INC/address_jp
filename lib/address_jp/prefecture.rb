@@ -2,12 +2,10 @@ module AddressJp
   class Prefecture < ApplicationModel
     data_file 'prefectures'
 
-    attr_reader :id, :name
+    attr_accessor :id, :name
     has_many :cities
-
-    def initialize(id:, name:)
-      @id = id.to_i
-      @name = name
-    end
+    has_many :counties
+    has_many :towns
+    has_many :villages # alias of towns
   end
 end

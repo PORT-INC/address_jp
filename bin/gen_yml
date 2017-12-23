@@ -24,6 +24,9 @@ HOKKAIDO = 1
 TOKYO = 13
 KANAGAWA = 14
 OSAKA = 27
+OKINAWA = 47
+
+OKINAWA_COUNTIES = [300, 320, 340, 370, 380]
 
 def central_city_hash(csv)
   {
@@ -59,6 +62,50 @@ def ward_hash(csv)
   }
 end
 
+alias county_hash central_city_hash
+
+def town_hash(csv)
+  # id, prefecture_id, county_id, name
+  county_id = AddressJp::Util.int_floor(csv[:city_id], 20)
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    county_id: county_id,
+    name: csv[:city_name]
+  }
+end
+
+def town_without_county_hash(csv)
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    county_id: nil,
+    name: csv[:city_name]
+  }
+end
+
+def okinawa_town_hash(csv)
+  city_code = csv[:city_code]
+  county_id = nil
+  if city_code > OKINAWA_COUNTIES.last
+    county_id = 47000 + OKINAWA_COUNTIES.last
+  else
+    OKINAWA_COUNTIES.each_with_index do |county_code, i|
+      if county_code < city_code && city_code < OKINAWA_COUNTIES[i + 1]
+        county_id = 47000 + county_code
+        break
+      end
+    end
+  end
+
+  {
+    id: csv[:city_id],
+    prefecture_id: csv[:prefecture_id],
+    county_id: county_id,
+    name: csv[:city_name]
+  }
+end
+
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
   prefecture = csv[:prefecture_id]
   city_code = csv[:city_code]
@@ -85,20 +132,37 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
   when 200..299 # 市
     cities_data << city_hash(csv)
   else # 郡部・町村
-    # TODO: read county
-    if prefecture == HOKKAIDO || (prefecture == TOKYO && city_code >= 360)
-      # 北海道と東京都の離島は :wide_area_name に期待しない値が入っているので飛ばす
-      # TODO: read town
+    if prefecture == HOKKAIDO
+      # 北海道は郡ではない情報があるため飛ばす
+      next if city_code % 30 == 0
+      towns_data << town_without_county_hash(csv)
+    elsif prefecture == TOKYO && city_code >= 360
+      # 東京都の離島は郡の情報がない
+      next if city_code % 20 == 0
+      towns_data << town_without_county_hash(csv)
+    elsif prefecture == OKINAWA
+      # 沖縄県島尻郡は例外的に20毎の割り当てでない
+      if OKINAWA_COUNTIES.include?(city_code)
+        counties_data << county_hash(csv)
+      else
+        # 沖縄県の町・村
+        towns_data << okinawa_town_hash(csv)
+      end
+    elsif city_code % 20 == 0
+      # 群
+      counties_data << county_hash(csv)
     else
-      # TODO: read town
+      # 町・村
+      towns_data << town_hash(csv)
     end
   end
 end
 
-pp cities_data
-pp wards_data
+puts 'Start writing YAML from cities_jp.csv...'
 
 AddressJp::Util.dump_yaml cities_data, 'cities'
 AddressJp::Util.dump_yaml wards_data, 'wards'
+AddressJp::Util.dump_yaml counties_data, 'counties'
+AddressJp::Util.dump_yaml towns_data, 'towns'
 
 puts 'Complete.'

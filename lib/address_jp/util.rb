@@ -14,5 +14,9 @@ module AddressJp
       file_path = "#{root}/lib/address_jp/data/#{file_name}.yml"
       YAML.dump(object, File.open(file_path, 'w'))
     end
+
+    def self.int_floor(integer, base)
+      ((integer.to_f / base.to_f).floor * base).to_i
+    end
   end
 end
