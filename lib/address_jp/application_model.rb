@@ -22,7 +22,7 @@ module AddressJp
       end
 
       def find(id)
-        all.find { |prefecture| prefecture.id == id }
+        all.find { |model| model.id == id }
       end
 
       def belongs_to(model_name)
