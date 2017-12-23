@@ -62,13 +62,7 @@ def ward_hash(csv)
   }
 end
 
-def county_hash(csv)
-  {
-    id: csv[:city_id],
-    prefecture_id: csv[:prefecture_id],
-    name: csv[:wide_area_name],
-  }
-end
+alias county_hash central_city_hash
 
 def town_hash(csv)
   # id, prefecture_id, county_id, name
