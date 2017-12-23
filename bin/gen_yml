@@ -158,10 +158,11 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
   end
 end
 
-pp counties_data
-pp towns_data
+puts 'Start writing YAML from cities_jp.csv...'
 
 AddressJp::Util.dump_yaml cities_data, 'cities'
 AddressJp::Util.dump_yaml wards_data, 'wards'
+AddressJp::Util.dump_yaml counties_data, 'counties'
+AddressJp::Util.dump_yaml towns_data, 'towns'
 
 puts 'Complete.'
