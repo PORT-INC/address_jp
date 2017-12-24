@@ -40,6 +40,18 @@ module AddressJp
           end
         end
       end
+
+      def where(**conditions)
+        all.select do |model|
+          conditions.inject(true) do |true_or_false, (key, value)|
+            true_or_false && model.send(key) == value
+          end
+        end
+      end
+
+      def find_by(**conditions)
+        where(**conditions).first
+      end
     end
   end
 end
