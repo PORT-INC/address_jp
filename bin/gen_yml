@@ -106,6 +106,8 @@ def okinawa_town_hash(csv)
   }
 end
 
+puts 'Start writing YAML from cities_jp.csv...'
+
 CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |csv|
   prefecture = csv[:prefecture_id]
   city_code = csv[:city_code]
@@ -157,8 +159,6 @@ CSV.table("#{AddressJp::Util.root}/lib/address_jp/data/cities_jp.csv").each do |
     end
   end
 end
-
-puts 'Start writing YAML from cities_jp.csv...'
 
 AddressJp::Util.dump_yaml cities_data, 'cities'
 AddressJp::Util.dump_yaml wards_data, 'wards'
