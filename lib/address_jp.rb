@@ -8,7 +8,7 @@ require 'address_jp/ward'
 require 'address_jp/county'
 require 'address_jp/town'
 
-require 'address_jp/parser'
+require 'address_jp/address'
 
 require 'yaml'
 require 'active_support'
