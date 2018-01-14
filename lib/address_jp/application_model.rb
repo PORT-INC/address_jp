@@ -43,9 +43,7 @@ module AddressJp
 
       def where(**conditions)
         all.select do |model|
-          conditions.inject(true) do |true_or_false, (key, value)|
-            true_or_false && model.send(key) == value
-          end
+          conditions.map { |key, value| model.send(key) == value }.inject('&&')
         end
       end
 
