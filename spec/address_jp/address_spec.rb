@@ -22,4 +22,8 @@ describe Address do
       end
     end
   end
+
+  it 'can not call constructor' do
+    expect { Address.new(nil, nil, nil, nil, nil, nil) }.to raise_error(NoMethodError)
+  end
 end

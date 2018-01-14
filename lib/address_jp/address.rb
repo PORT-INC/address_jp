@@ -8,6 +8,8 @@ module AddressJp
       end
     end
 
+    private_class_method :new
+
     class << self
       def parse(string)
         prefecture = find_prefecture(string)
