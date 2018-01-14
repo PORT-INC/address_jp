@@ -1,6 +1,6 @@
 module AddressJp
   class Address
-    attr_reader :prefecture, :city, :county, :town, :detail
+    attr_reader :prefecture, :city, :ward, :county, :town, :detail
 
     def initialize(prefecture, city, ward, county, town, detail)
       %w(prefecture city ward county town detail).each do |attribute|
@@ -9,6 +9,17 @@ module AddressJp
     end
 
     private_class_method :new
+
+    def to_h
+      {
+        prefecture: @prefecture&.to_h,
+        city: @city&.to_h,
+        ward: @ward&.to_h,
+        county: @county&.to_h,
+        town: @town&.to_h,
+        detail: detail
+      }
+    end
 
     class << self
       def parse(string)
