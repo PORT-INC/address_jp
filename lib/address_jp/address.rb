@@ -11,9 +11,9 @@ module AddressJp
     class << self
       def parse(string)
         prefecture = find_prefecture(string)
-        city = find_city(string, prefecture)
+        city, detail = find_city_detail(string, prefecture)
         # TODO: find county, town, detail
-        new(prefecture, city, nil, nil, nil)
+        new(prefecture, city, nil, nil, detail)
       end
 
       private
@@ -24,12 +24,15 @@ module AddressJp
         end
       end
 
-      def find_city(string, prefecture)
+      def find_city_detail(string, prefecture)
         if (city_match = string.match(City.regex))
-          City
+          city = City
             .where(name: city_match.to_s)
             .select { |city| city.prefecture.id == prefecture.id }
             &.first
+          detail_position = city_match.end(1)
+          detail = string[detail_position..-1]
+          [city, detail]
         end
       end
     end
