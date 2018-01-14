@@ -2,8 +2,8 @@ module AddressJp
   class Address
     attr_reader :prefecture, :city, :county, :town, :detail
 
-    def initialize(prefecture, city, county, town, detail)
-      %w(prefecture city county town detail).each do |attribute|
+    def initialize(prefecture, city, ward, county, town, detail)
+      %w(prefecture city ward county town detail).each do |attribute|
         instance_variable_set "@#{attribute}", instance_eval(attribute)
       end
     end
@@ -12,8 +12,8 @@ module AddressJp
       def parse(string)
         prefecture = find_prefecture(string)
         city, detail = find_city_detail(string, prefecture)
-        # TODO: find county, town, detail
-        new(prefecture, city, nil, nil, detail)
+        # TODO: find ward, county, town, detail
+        new(prefecture, city, nil, nil, nil, detail)
       end
 
       private
