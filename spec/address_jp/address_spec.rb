@@ -11,5 +11,14 @@ describe Address do
         expect(address.city.name).to eq '新宿区'
       end
     end
+
+    context 'duplicate city' do
+      it 'parse address string' do
+        # 福島県にも伊達市がある
+        address = Address.parse('北海道伊達市鹿島町20-1')
+        expect(address.city.prefecture.name).to eq '北海道'
+        expect(address.city.name).to eq '伊達市'
+      end
+    end
   end
 end
