@@ -6,6 +6,12 @@ module AddressJp
       end
     end
 
+    def to_h
+      instance_variables.map do |name|
+        [name.to_s.delete('@').to_sym, instance_variable_get(name)]
+      end.to_h
+    end
+
     class << self
       def data_file(file_name)
         @data = AddressJp::Util.load_master_data(file_name)

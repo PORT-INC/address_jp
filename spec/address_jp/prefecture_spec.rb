@@ -45,4 +45,14 @@ describe Prefecture do
       expect(subject.id).to eq 47
     end
   end
+
+  describe '#to_h' do
+    subject { prefecture.to_h }
+    it 'should be expected hash' do
+      is_expected.to eq({
+        id: 12,
+        name: '千葉県'
+      })
+    end
+  end
 end
