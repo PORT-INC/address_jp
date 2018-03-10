@@ -32,6 +32,18 @@ describe Town do
       end
     end
   end
+
+  describe 'full_name' do
+    subject { town.full_name }
+    context 'with county' do
+      let(:town) { town_with_county }
+      it { is_expected.to eq '八重山郡与那国町' }
+    end
+    context 'without county' do
+      let(:town) { town_without_county }
+      it { is_expected.to eq '小笠原村' }
+    end
+  end
 end
 
 describe 'Village' do
