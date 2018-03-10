@@ -27,9 +27,17 @@ module AddressJp
     class << self
       def parse(string)
         prefecture = find_prefecture(string)
-        city, detail = find_city_detail(string, prefecture)
-        # TODO: find ward, county, town, detail
-        new(prefecture, city, nil, nil, nil, detail)
+        case detect_type string
+        when :city_ward
+          # TODO: find ward, city, detail
+        when :city
+          city, detail = find_city_detail(string, prefecture)
+          new(prefecture, city, nil, nil, nil, detail)
+        when :town
+          # TODO: find county, town, detail
+        else
+          raise ArgumentError
+        end
       end
 
       def detect_type(string)
