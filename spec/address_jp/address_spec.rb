@@ -29,6 +29,14 @@ describe Address do
     end
   end
 
+  describe '.detect_type' do
+    subject { Address.detect_type(string) }
+    context 'city with ward' do
+      let(:string) { '熊本県熊本市西区春日三丁目15-1' }
+      it { is_expected.to eq :city_ward }
+    end
+  end
+
   describe '#to_h' do
     subject { address.to_h }
     let(:address) { Address.parse('東京都新宿区西新宿二丁目8番1号') }

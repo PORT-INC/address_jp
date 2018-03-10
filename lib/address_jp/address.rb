@@ -32,6 +32,17 @@ module AddressJp
         new(prefecture, city, nil, nil, nil, detail)
       end
 
+      def detect_type(string)
+        return unless string.match(Prefecture.regex)
+        if string.match(Ward.full_name_regex)
+          :city_ward
+        elsif string.match(City.regex) && !string.match(Ward.full_name_regex)
+          :city
+        elsif string.match(Town.full_name_regex)
+          :town
+        end
+      end
+
       private
 
       def find_prefecture(string)
