@@ -3,9 +3,12 @@ module AddressJp
     attr_reader :prefecture, :city, :ward, :county, :town, :detail
 
     def initialize(prefecture, city, ward, county, town, detail)
-      %w(prefecture city ward county town detail).each do |attribute|
-        instance_variable_set "@#{attribute}", instance_eval(attribute)
-      end
+      @prefecture = prefecture
+      @city = city
+      @ward = ward
+      @county = county
+      @town = town
+      @detail = detail
     end
 
     private_class_method :new
@@ -17,7 +20,7 @@ module AddressJp
         ward: @ward&.to_h,
         county: @county&.to_h,
         town: @town&.to_h,
-        detail: detail
+        detail: @detail
       }
     end
 
