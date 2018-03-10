@@ -35,6 +35,26 @@ describe Address do
       let(:string) { '熊本県熊本市西区春日三丁目15-1' }
       it { is_expected.to eq :city_ward }
     end
+    context 'city name' do
+      let(:string) { '島根県松江市末次町86番地' }
+      it { is_expected.to eq :city }
+    end
+    context 'Tokyo ward name' do
+      let(:string) { '東京都新宿区西新宿二丁目8番1号' }
+      it { is_expected.to eq :city }
+    end
+    context 'town name' do
+      let(:string) { '埼玉県入間郡三芳町藤久保1100-1' }
+      it { is_expected.to eq :town }
+    end
+    context 'without prefecture name' do
+      let(:string) { '存在しない住所' }
+      it { is_expected.to eq nil }
+    end
+    context 'invalid string' do
+      let(:string) { '東京都の存在しない住所' }
+      it { is_expected.to eq nil }
+    end
   end
 
   describe '#to_h' do
