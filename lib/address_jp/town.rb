@@ -9,6 +9,12 @@ module AddressJp
     def full_name
       "#{county&.name}#{name}"
     end
+
+    class << self
+      def full_name_regex
+        /#{all.map(&:full_name).join('|')}/o
+      end
+    end
   end
 
   # class name 'Village' is also available

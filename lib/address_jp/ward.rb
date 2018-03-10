@@ -8,5 +8,11 @@ module AddressJp
     def full_name
       "#{city.name}#{name}"
     end
+
+    class << self
+      def full_name_regex
+        /#{all.map(&:full_name).join('|')}/o
+      end
+    end
   end
 end
